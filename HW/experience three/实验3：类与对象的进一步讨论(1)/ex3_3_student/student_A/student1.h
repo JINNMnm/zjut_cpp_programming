@@ -1,0 +1,13 @@
+//student1.h
+class Student {
+public:
+ Student();//考虑这里为什么不缺省无参构造?
+ Student(char * n);
+ //Student(const Student & other);
+ //Student& operator=(const Student& right);  
+ //~Student( );
+ char  *GetName();  //获取名字
+ void  ChangeName(char *n);  //改名
+private:
+ char name[20];
+};

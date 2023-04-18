@@ -1,0 +1,189 @@
+//--------------------------------分析预测输出----------------------------------------//
+im a clock:8:34:45//aclock
+im a copy clock:8:34:45//bclock
+//r15
+im a box:10-10-10//abox
+im a box 20-30-10//bbox
+//r16
+im a box:1-3-4
+im a clock:2:3:4
+Demo-Constructer1.//ademo
+Demo-Copy Constructor.//bdemo
+im a copy clock:8:34:45
+im a copy box:10-10-10
+Demo-Constructer2.//cdemo
+im a box:3-0-0
+im a clock:4:0:0
+Demo-Constructor1.//dDemo
+//r20,这样也行？？？？目前猜测是在pclock的地方申请地址，储存的是一个Clock(6,7,8)
+im a clock:6:7:8//pclock
+//r21,应该是一个拷贝，拷贝的source是cdemo 的box
+im a copy box:10-10-10//pbox
+//r22,产生了两个demo
+im a box:6-8-9
+im a clock:7:8:9
+Demo-Constructer1.//pdemo[0]
+im a copy clock:8:34:45
+im a copy box:20-30-10
+Demo-Constructer2.//pdemo[1]
+//fun1 output
+im a copy clock:6:7:8
+A clock says: Bye-bye.0:0:0//没有改pclock的值
+//fun2 output,用了拷贝构造,但demo的拷贝构造就写了一个输出，没有值，应该就是默认值？
+//但是这个函数类型也是Demo，有两个拷贝构造？那这里析构的顺序是怎么样的啊？
+//猜测是先析构box，因为头文件在前面:)
+Demo-Copy Constructor.
+Demo-Copy Constructor.
+A box says: Bye-bye.10-10-10
+A clock says: Bye-bye.0:0:0
+//r25
+A clock says: Bye-bye.6:7:8
+//r26，我记得是先析构pDemo[1].顺序就是构造反过来
+A box says: Bye-bye.20-30-10
+A clock says: Bye-bye.8:34:45//pDemo[1]的析构
+A clock says: Bye-bye.7:8:9
+A box says: Bye-bye.6-8-9
+//r27
+A box says: Bye-bye.10-10-10
+//r28接下来开始自动析构部分
+//顺序是dDemo、cDemo、bDemo、aDemo、bbox、abox、bclock、aclock
+//对着上面的构造反过来抄就好了应该
+A clock says: Bye-bye.4:0:0
+A box says: Bye-bye.3-0-0//dDemo
+A box says: Bye-bye.10-10-10
+A clock says: Bye-bye.8:34:45//cDemo
+A clock says: Bye-bye.1:1:1
+A box says: Bye-bye.10-10-10//bDemo,这里不是很确定，上面假设了先box构造，那这就应该是先clock？
+A clock says: Bye-bye.2:3:4
+A box says: Bye-bye.1-3-4//aDemo
+A box says: Bye-bye.20-30-10//bbox
+A box says: Bye-bye.10-10-10//abox
+A clock says: Bye-bye.8:34:45//bclock
+A clock says: Bye-bye.8:34:45//aclock
+
+//-------------------------------最终预测输出------------------------------------//
+im a clock:8:34:45
+im a copy clock:8:34:45
+im a box:10-10-10
+im a box 20-30-10
+im a box:1-3-4
+im a clock:2:3:4
+Demo-Constructer1.
+Demo-Copy Constructor.
+im a copy clock:8:34:45
+im a copy box:10-10-10
+Demo-Constructer2.
+im a box:3-0-0
+im a clock:4:0:0
+Demo-Constructor1.qd 
+im a clock:6:7:8
+im a copy box:10-10-10
+im a box:6-8-9
+im a clock:7:8:9
+Demo-Constructer1.
+im a copy clock:8:34:45
+im a copy box:20-30-10
+Demo-Constructer2.
+im a copy clock:6:7:8
+A clock says: Bye-bye.0:0:0
+Demo-Copy Constructor.
+Demo-Copy Constructor.
+A box says: Bye-bye.10-10-10
+A clock says: Bye-bye.0:0:0
+A clock says: Bye-bye.6:7:8
+A box says: Bye-bye.20-30-10
+A clock says: Bye-bye.8:34:45
+A clock says: Bye-bye.7:8:9
+A box says: Bye-bye.6-8-9
+A box says: Bye-bye.10-10-10
+A clock says: Bye-bye.4:0:0
+A box says: Bye-bye.3-0-0
+A box says: Bye-bye.10-10-10
+A clock says: Bye-bye.8:34:45
+A clock says: Bye-bye.1:1:1
+A box says: Bye-bye.10-10-10
+A clock says: Bye-bye.2:3:4
+A box says: Bye-bye.1-3-4
+A box says: Bye-bye.20-30-10
+A box says: Bye-bye.10-10-10
+A clock says: Bye-bye.8:34:45
+A clock says: Bye-bye.8:34:45
+
+//---------------------------------对正确答案的分析-----------------------------------//
+I'm a clock:8:34:45
+I'm a copy clock:8:34:45
+//------------clock构造------------------------------------//
+I'm a box:10-10-10
+I'm a box:20-30-10
+//-----------box构造---------------------------------------//
+I'm a box:1-3-4
+I'm a clock:2:3:4
+Demo-Constructor1.
+I'm a box:10-10-10
+I'm a clock:1:1:1
+Demo-Copy Constructor.//----------这里错了，Demo拷贝构造里面虽然就一个输出，但是只要生成了，就会有im a。。。。
+I'm a copy box:10-10:10
+I'm a copy clock:8:34:45
+Demo-Constructor2.//后面是冒号，没看清。顺序反了，不应该看后面的初始化列表的顺序，要看前面申明时括号里的？这里不太懂
+I'm a box:3-0-0
+I'm a clock:4:0:0
+Demo-Constructor1.
+//----------------Demo构造------------------------------//
+I'm a clock:6:7:8//r20
+I'm a copy box:10-10:10//r21
+I'm a box:6-8-9
+I'm a clock:7:8:9
+Demo-Constructor1.//Demo[0]
+I'm a copy box:20-30:10
+I'm a copy clock:8:34:45
+Demo-Constructor2./Demo[1]这里的顺序跟上面一样
+I'm a copy clock:6:7:8
+A clock says: Bye-bye.0:0:0//fun1 的输出，但没有真的改pclock的值
+//---------------接下来时fun2的输出，很复杂----------------//
+I'm a box:10-10-10
+I'm a clock:1:1:1
+Demo-Copy Constructor.//构造了xDemo
+I'm a copy clock:1:1:1//Clock getclock使用了拷贝构造函数，拷贝的是xDemo中的Clock y
+A clock says: Bye-bye.0:0:0//析构了上一条拷贝出来的getclock
+I'm a box:10-10-10
+I'm a clock:1:1:1
+Demo-Copy Constructor.//要return了，Demo fun2开始构造，把xDemo拷贝出来
+Demo-Destructor.
+A clock says: Bye-bye.1:1:1
+A box says: Bye-bye.10-10-10//return结束了，把xDemo析构掉
+Demo-Destructor.
+A clock says: Bye-bye.1:1:1
+A box says: Bye-bye.10-10-10//fun2结束了，把fun2析构掉
+//----------fun2的输出完毕----------------------------------//
+A clock says: Bye-bye.6:7:8
+//----------pclock的析构-----------------------------------//
+Demo-Destructor.
+A clock says: Bye-bye.8:34:45
+A box says: Bye-bye.20-30-10//先执行自己的析构函数，在执行系统的析构，顺序上，反过来就行了
+Demo-Destructor.
+A clock says: Bye-bye.7:8:9
+A box says: Bye-bye.6-8-9
+//----------pDemo的析构------------------------------------//
+A box says: Bye-bye.10-10-10
+//----------------------开始return------------------------//
+Demo-Destructor.
+A clock says: Bye-bye.4:0:0
+A box says: Bye-bye.3-0-0
+Demo-Destructor.
+A clock says: Bye-bye.8:34:45
+A box says: Bye-bye.10-10-10
+Demo-Destructor.
+A clock says: Bye-bye.1:1:1
+A box says: Bye-bye.10-10-10
+Demo-Destructor.
+A clock says: Bye-bye.2:3:4
+A box says: Bye-bye.1-3-4
+//------------析构Demo-----------------------------------//
+A box says: Bye-bye.20-30-10
+A box says: Bye-bye.10-10-10
+//-------------析构box-----------------------------------//
+A clock says: Bye-bye.8:34:45
+A clock says: Bye-bye.8:34:45
+//-------------析构Clock---------------------------------//
+
+
