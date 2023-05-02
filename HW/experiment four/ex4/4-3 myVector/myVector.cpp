@@ -9,8 +9,7 @@ myVector::myVector(unsigned n,int value){
     }
 }
 
-myVector::myVector(const myVector& right){
-    size = right.size;
+myVector::myVector(const myVector& right):size(right.size){
     for(int i = 0;i < size;i++){
         data[i] = right.data[i];
     }
@@ -53,8 +52,7 @@ myVector myVector::operator-(){
 void myVector::sort() {  
     for (int i = 0; i < size - 1; i++) {    
         for (int j = 0; j < size - i - 1; j++) {    
-            if (data[j] > data[j + 1]) {    
-                // ½»»» data[j] ºÍ data[j+1]    
+            if (data[j] > data[j + 1]) {      
                 int temp = data[j];    
                 data[j] = data[j + 1];    
                 data[j + 1] = temp;    

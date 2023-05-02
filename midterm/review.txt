@@ -1,0 +1,421 @@
+类基本概念
+class A{
+    private:(可缺省)
+        数据成员为主
+        
+    public:
+        四个可缺省的成员函数
+        1. 无参构造 A();
+            写了一个无参构造以外的构造函数后(包括拷贝构造),默认无参不再提供.所以最好自己写一个。
+            A(int xv,int yv):x(xv),y(yv){};
+        2. 拷贝构造 A(const A& other) : x(other.x);//被构造的对象，最初时无空间，
+        3. 复制重载 A& operator=(const A&);//左值是一个已经构造完毕的对象
+        4. 析构 ~A();//无返回类型，名字固定 无参无重载。ex1不用，ex2要。
+};
+拓展：
+1. ex2需要重写可缺省函数
+2. 缺省的话最好写成： // if(x) delete[] x;
+3. A objb =obja // 这是拷贝构造不是复制重载，因为这里时声明
+4. 拷贝构造的使用{
+    1. 形参是类类型，返回类型是类类型
+    example： A func(A a){return a;}
+    2. 动态对象的申请
+    example： A* p = new A;//无参构造
+    example： A* p = new A[10];//无参构造，构造10个,也可以理解为A a[10];
+    example： A* p = new A(1,2);//有参构造
+    example： A* p = new A[10]{A(1,2)};//有参构造一个，其余都是无参构造
+    3. 类型转换(其他类型向定义类型的隐式转换)
+    example： A obj; obj = 3;//隐式转换,先3使用一个带参构造变成A类型的临时对象，再复制重载，在析构临时对象。
+    //还有的是： obj + 3;
+    4. 函数返回值
+    example： A func(){return A(1,2);}//返回一个临时对象
+    example： A func(){A a(1,2);return a;}//返回一个已经构造完毕的对象
+}
+5. 析构的使用{
+    1. 一般情况，析构时自动使用的。调用点是作用域结束为止
+    2. 同作用域顺序和构造相反。跨作用域，作用域优先。动态对象，delete优先。
+    这里等下复制一下老师的那个例子我不自己打了。
+    包括那个稍微复杂一点的构造函数，即是类内的成员类型是另一个类clock。
+}
+6.类内的const，static，friend{
+    1.常成员函数const 后置(不允许修改类的数据成员)，常数据成员const 前置(不允许修改类的数据成员)
+    2. 常对象，常对象的引用，常对象的指针都不允许调用非常成员函数
+    example： const A obja; obja.print();//不允许
+    example： const &A obja; obja.print();//不允许
+    example： const *A obja=&objb; obja->print();//不允许
+    example： const A obja; obja.print()const;//允许
+    3.形参是常引用同理：
+    example： void func(const A& obja){obja.print();}//不允许
+
+
+    1.static都是前置的，表示类的共享数据成员和成员函数。只有一份。
+    2.类外初始化static数据成员
+    example： int A::count = 0;
+    不过在main函数中也可以直接obj::count = 0;
+    3.类外初始化static成员函数
+    example： void A::print(){cout<<count<<endl;}
+
+
+    4.friend。友元函数就是一个普通函数，只不过可以访问这个类的私有成员。
+}
+
+7.静态多态{
+    1.重载(普通函数重载){
+        1.形参的个数和类型不同，即要能从调用的实参来辨别
+        2.类型判别(识别常量的类型，看复习拓展1) ， 
+        3.知道编译器选取重载的原则：{
+            1. 首先匹配形参个数匹配，类型严格匹配(不需要隐式转换)，不然就用模板。
+            2. 做了类型转换后可以适配的(不过有引用好像就不能转换了)。就如模拟测试第一的那个例子。funtest 的(100,97.3)
+            3. 没法工作。
+        }
+        
+    }
+
+    2.运算符重载
+}
+
+
+# 大一期中复习
+
+## 类的声明-基本语法
+
+```c++
+class A{ //A是类型名称
+	public://数据成员,成员函数(多见)
+	private://数据成员(多见),成员函数   private可省略
+};
+```
+
+### 类内的4个可缺省成员
+
+#### A()；——无参构造
+
+实际工作中多个，允许重载构造函数，带参。
+实际工作中定义构造需要注意的：
+
+ 1. **形参个数设计应该跟数据成员成员对等**
+
+ 2. **尽量完成多形式的构造** 如：
+
+    ```c++
+     A(int xv=0,int yv=0):x(xv),y(yv){ } //A obj1,obj2(3),obj3(3,5);
+    ```
+
+#### A(const A&)；——拷贝构造 
+
+**构造函数重载中要注意点：一旦写了一个构造函数（不是无参构造），*无参构造就不能缺省给你***
+**必须检查定义的类支持无参构造，因为 动态对象会启用无参构造**，如：
+
+```c++
+A *p=new A;A obj[3];
+```
+
+#### A& operator=(const A&)；——赋值重载
+
+#### ~A()；——析构
+
+像ex1这种类型的类 不需要特别考虑可缺省成员
+像ex2这种，必须考虑重写可缺省成员，理解各种缺省成员实际要做的工作
+注：这里ex1和ex2的区别在于类的数据成员是否存在指针
+
+### 重写类内可缺省成员
+
+```c++
+class Aexample{
+public：
+  Aexample(){x=NULL;}//无参构造
+  Aexample(const char* xstring)
+  {
+     x=new char[strlen(xstring)+1];
+     strcpy(x,xstring);
+  }
+  Aexample(const Aexample& other)//拷贝构造
+  {
+     x=new char[strlen(other.x)+1];
+     strcpy(x,other.x);
+  }
+   Aexample& operator=(const Aexample& right)//赋值重载
+  {
+  // 理解赋值工作和拷贝构造的差别
+  // （*this）一定是一个已经构造完毕的对象  
+     if(this!=&right) //考虑自赋值 obj=obj;因此直接看地址是否一致
+     {   
+        if(x) delete x;
+        x=new char[strlen(right.x)+1];
+        strcpy(x,right.x); 
+     }
+     return *this;
+  }
+  ~A()//析构函数
+  {
+     if(x) delete []x;
+  }
+private：
+  char *x;
+}；
+
+A aobj;//无参构造
+A *p;
+A bobj(aobj);//拷贝构造
+A cobj=aboj;//拷贝构造
+p=new A;
+aobj=bobj;//赋值重载
+aobj=(*p);//赋值重载
+```
+
+
+
+## 类的使用-进阶
+
+
+
+```c++
+class A{
+public:
+ A(int xv=0,int yv=0):x(xv),y(yv){ }
+private:
+  int x,y;
+};
+```
+
+
+
+### 常规对象声明
+
+### **根据声明形式去找到对应的构造函数构造对象**
+
+```c++
+A obj;//无参
+A obj(1)，obj(2,3); //带参，根据参数个数，类型去找匹配的构造函数
+A obj1,obj2(obj1);//拷贝构造
+A obj1,obj2=obj1;//obj2也是拷贝构造
+```
+
+
+
+### 构造函数的隐含使用
+
+##### **拷贝构造的另两种形式：类类型的形参，类类型的返回值**
+
+```c++
+A fun(A x){
+    return x;
+}；
+//对于这样的函数,一共创建了2次对象;1个是形参x的创建，1个是函数返回值创建的临时对象
+//对象x析构 是在fun函数结束之后; 函数临时对象 是在main函数中该调用语句结束后析构
+//顺序: x创建-临时对象创建-x析构-返回main函数-临时对象析构
+```
+
+##### 动态对象的使用
+
+```c++
+A *p=new A; //无参构造构造匿名对象
+A *p=new A[3]; //都用的无参构造构造的匿名对象组
+A *p=new A[3]{ A(1)};//p[0] 有1个参数的构造; p[1],p[2]用的无参构造
+```
+
+##### 类型转换（隐式类型转换，其他类型的数据值向当前工作类型转换）
+
+```c++
+A obj;
+obj=2;//先用1个形参值为2的构造函数构造临时对象，然后再做赋值，析构临时对象
+complex c1(2,3);//??(不知道这个例子在这里的用处)
+c1+3;
+```
+
+
+
+### 析构的使用
+
+**一般的情况下，析构与构造相反（构造的所有对象在一层作用域）**
+
+```c++
+int main()
+{  
+   A obj1,obj2(3),obj3(4,5); //构造顺序按照声明顺序obj1,obj2,obj3
+   return 0; //作用域结束，析构与析构相反obj3,obj2,obj1
+}
+```
+
+
+
+**注:析构最终决定者作用域结束；动态对象delete析构，没有delete不析构**
+
+```c++
+int main()
+{  
+   A *p; 
+   p=new A;
+   return 0; 
+}
+```
+
+这里没有 ***delete p*** ，没有删除动态对象，所以不会析构
+
+**带函数的析构**
+
+```c++
+A fun(A x){return x;}
+
+int main()
+{  A obj1(3),obj2(obj1),obj3; //构造顺序obj1，obj2,obj3
+   A *p1=new A(5); //带一个参数构造匿名对象 *p1
+   A *p2=new A[3]{A(),A(2,3)};
+  //p2[0]无参构造，p2[1]带参构造，p2[2] 无参构造
+   delete []p2; //析构顺序p2[2],p2[1],p2[0]
+   fun(*p1);
+//fun：拷贝构造*p1构造了形参x,return x 使用拷贝构造x构造了临时对象fun，
+//形参x析构
+//main: 调用行结束 析构临时对象fun
+   delete p1; //析构*p1
+   return 0; //析构其他对象：obj3,obj2,obj1
+}
+```
+
+
+
+**更复杂的构造析构，内嵌对象**
+
+```c++
+class A{
+public:
+ A(const clock& xv=clock(),const clock& yv=clock()):y(xv),x(yv){   }
+    //不管 "y(xv),x(yv)" 的顺序如何,都是按类内声明顺序为构造顺序
+ A(const A& other):x(other.x),y(other.y){
+   cout<<"copy constructor"; }
+private:
+ clock x,y; //按类内声明顺序为构造顺序
+};
+
+int main(){
+A obj; //先执行clock的构造函数构造x，再执行clock的构造函数构造y，最后执行A的构造函数构造 obj
+A bobj（obj）;
+return 0; //执行析构函数顺序与构造相反, 析构顺序:bobj--bobj.y--bobj.x--obj--obj.y--obj.x
+}
+```
+
+## const,static,friend
+
+### const：
+
+##### 类内：
+
+**常成员函数-后置 函数不能修改类的数据成员**
+
+```c++
+class A{
+	public:
+		int fun(int x) const {....};
+	private:
+		int x,y; 
+};
+```
+
+**常量数据成员-前置  声明时初始化(构造函数用初始化列表初始化)**
+
+```c++
+class A{
+	public:
+		A(int vx=0,int vy=0):x(vx),y(vy){ }
+	private:
+		const int x；
+         int y; 
+};
+```
+
+##### 类外：
+
+***常对象，常对象的引用，指向常对象的指针*    不能做赋值，不能使用类的非常成员函数**
+
+```c++
+class A
+{
+public:
+ A(int xv=0,int yv=0):x(xv),y(yv){ }
+ void set(int xv,int yv){ x=xv; y=yv; }
+ int get()const ;
+private:
+  int x,y;
+};
+int A::get() const {return x; } //类外实现不要忘记const
+----------------------------------------------------------------------
+int main ()
+{
+	const A obj; //const A obj(3,5); 都可以
+	const A& robj=obj; //必须先关联引用对象
+	const A* pobj;
+	obj.set(3,4);//错误
+	robj.set(3,5);//错误
+	pobj->set(3,6);//错误
+    
+    obj.get();//正确
+    robj.grt();//正确
+    pobj->get();//正确
+}
+
+```
+
+
+
+### static：
+
+**static的数据成员，类的所有对象共享的数据或者函数，无论类的对象实例有几个（0~无穷），都共享一份数据**
+
+**非static的数据成员每个对象有自己的独立空间**
+
+**成员函数：前置     数据成员 ：前置**
+
+***注：数据成员初始化必须在类外完成***
+
+```c++
+class A{
+public:
+ A(int yv=0):y(yv){ }
+ void set(int xv,int yv){ x=xv; y=yv; }
+ static int x; //通常也会是私有的，配合后面的举例
+private:  
+  int y;
+};
+static int A::x=5; //类外初始化
+--------------------------------------------------------
+int main (){
+	A::x;//如果x私有就不能这么使用了
+	A obj;
+	obj.x;
+}
+```
+
+
+
+### friend：
+
+**为了访问类的私有成员（数据或者函数）**
+
+**友元类，友元函数1（其他类的成员函数），友元函数2（普通函数，就是类外定义的函数）**
+
+```c++
+class A{
+public:
+ friend void show (A& a) {cout<<a.x}//此类型就是"友元函数2"的类型
+private:  
+  int x;
+};
+-----------------------------------------------
+void show (A& a) {cout<<a.x}
+int main (){
+    A a;
+    show(a);//此时如果没有友元声明，则show函数不能访问a的成员变量x,函数出错
+}
+```
+
+## 多态-静态多态-重载函数
+
+**一般的重载函数（跟类没有什么关系的）**
+
+**运算符重载**
+**1、重载的必须条件：形参个数或者类型有差异**
+**2、重载必须有2个及以上的同名函数（运算符重载指的相对基本类型或者其他类型的同种运算符功能而言的）**
+**3、要从调用的形式上判别重载的版本（使用哪个重载函数）**
+
+**参数个数比较容易分辨；**
+**实参类型如何去匹配形参类型（类型转换适应）相当于赋值时左值对右值的类型要求**

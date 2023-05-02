@@ -8,6 +8,12 @@ myString::myString() {
     size = 0;  
 }
 
+myString::myString(const myString& right) {  
+    str = new char[strlen(right.str) + 1];  
+    strcpy(str, right.str);  
+    size = right.size;  
+}
+
 myString::myString(const char* rstr,int s = 0,int len = 0) {  
     if (rstr[0] == '\0') {  
         str[0] = '\0';  
@@ -22,13 +28,15 @@ myString::myString(const char* rstr,int s = 0,int len = 0) {
     str[i] = '\0';
     size = strlen(str);  
 }
+
 myString::myString(const char* r){
     str = new char[strlen(r) + 1];
     strcpy(str,r);
     size = strlen(str);
     return;
 }
-myString::myString(int len = 0,const char r = '\0'){
+
+myString::myString(int len,const char r = '\0'){
     size = len;
     str = new char[size + 1];
     int i;
@@ -39,7 +47,7 @@ myString::myString(int len = 0,const char r = '\0'){
 }
 
 myString::~myString() {  
-    delete[] str;  
+     delete[] str;  
 }
 
 void myString::display() const {  
@@ -48,6 +56,7 @@ void myString::display() const {
 
 void myString::input() {  
     cout << "ÇëÊäÈë×Ö·û´®£º";  
+    getchar();//????????
     gets(str);
 }
 
@@ -70,11 +79,12 @@ int operator>(const myString& a, const myString& b) {
 }
 
 myString& myString::operator=(const char * right){
-    if(str == NULL){
+    if(str != NULL){
         delete [] str;
     }
     this->str = new char [strlen(right) + 1];
     strcpy(str,right);
+    size = strlen(str);
     return (*this);
 }
 myString& myString::operator=(const myString& other) {
@@ -83,13 +93,12 @@ myString& myString::operator=(const myString& other) {
     }
     str = new char [other.size + 1];
     strcpy(str,other.str); 
-    size = other.size;  
-    // cout << "str:" << str << "        " << "size:" << size << endl;
-    return *this;  
+    size = other.size;
+    return (*this);  
 }
 
 myString operator+(const myString &a, const myString &b){
-    myString res("ni",0,1);
+    myString res;
     res.size = a.size + b.size;
     int i;
     for( i = 0;i < res.size;i++){

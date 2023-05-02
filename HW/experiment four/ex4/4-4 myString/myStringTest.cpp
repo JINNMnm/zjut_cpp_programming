@@ -48,16 +48,19 @@ int main()
    for (int i = 0; i < b.len(); i++)
       cout << b[i];
    cout << endl;
-   cout << "tesy >> and <<" << "input to m:";
+
+   cout << "test >> and <<" << "input to m:";
    myString m;
    cin >> m;
    cout << "m is:" << m << endl;
+
    b = "Steve is happy today.";
    cout << "b:";
    b.display();
-   c.display();
+
    a.input();   //ÊäÈë£ºKate wasn't hungry.
    a.display(); //Êä³ö£ºKate wasn't hungry.
+
    a = e + " and " + c;
    a.display(); //Êä³ö£º I love ZJUT and hot weather
    return 0;

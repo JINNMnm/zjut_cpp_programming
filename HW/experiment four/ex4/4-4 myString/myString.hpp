@@ -8,9 +8,12 @@ public:
    myString(const char* str,int s,int end);
    myString(int len,const char r);
    myString(const char* r);
+   myString(const myString& right);
+
    void display() const; //显示字符串
    void input();                              //输入字符串
    int len() const;                           //求字符串长
+   
    //补充下标重载运算
    char& operator[](int i);
    friend int operator==(const myString &a, const myString &b);     //字符串等于比较
