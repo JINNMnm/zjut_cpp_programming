@@ -153,3 +153,5 @@ template <class T>
 myVector<T>::~myVector(){
     delete[] data;
 }
+
+#include "../hpp/myVector.hpp"

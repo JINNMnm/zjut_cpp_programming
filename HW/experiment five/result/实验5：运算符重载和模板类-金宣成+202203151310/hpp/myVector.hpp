@@ -53,4 +53,4 @@ public:
     ~myVector();
 }; 
 
-template class myVector<myString>;
+//template class myVector<myString>;
