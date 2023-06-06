@@ -6,7 +6,7 @@ using namespace std;
 class shape
 {
 public:
-  virtual float area(){return 0;}
+  virtual float area()const=0;
 };
 
 // Point类的声明 point.h
@@ -18,7 +18,7 @@ public:
   float getX() const { return x; } //读x坐标
   float getY() const { return y; } //读y坐标
   virtual void display(ostream &out) const;
-  virtual float area() const { return 0; } //计算面积
+  float area() const { return 0; } //计算面积
 protected:                                 //受保护成员
   float x, y;
 };
